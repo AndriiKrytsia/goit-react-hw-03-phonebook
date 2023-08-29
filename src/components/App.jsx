@@ -4,16 +4,32 @@ import { ContactForm } from './ContactForm';
 import { Filter } from './Filter';
 import { nanoid } from 'nanoid';
 
+const LOCAL_STORAGE_KEY = 'contacts';
 export class App extends Component {
   state = {
     contacts: [],
     filter: '',
   };
 
+  componentDidUpdate(_, prevState) {
+    if (prevState.contacts !== this.state.contacts) {
+      localStorage.setItem(
+        LOCAL_STORAGE_KEY,
+        JSON.stringify(this.state.contacts)
+      );
+    }
+  }
+
+  componentDidMount() {
+    this.setState({
+      contacts: JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) || [],
+    });
+  }
+
   handelAddContact = (name, number) => {
     if (
       this.state.contacts.find(
-        contact => contact.name.toLowerCase === name.toLowerCase
+        contact => contact.name.toLowerCase() === name.toLowerCase()
       )
     ) {
       alert(`${name} is already in contacts`);
